@@ -21,6 +21,9 @@ public class Fix{
 						System.out.println("========================================");
 					}
 					break;
+				case "-n":
+					outputQuestionsInRange(Integer.valueOf(args[1]),Integer.valueOf(args[2]));
+					break;
 				case "-t":
 					System.out.println(getChangeTime());
 					break;
@@ -51,7 +54,7 @@ public class Fix{
 			BufferedReader br = new BufferedReader(fr);
 			for(int i=0;i<key;i++){
 				fq = new FixQuestion();
-				fq.readFronFile(br);
+				fq.readFromFile(br);
 			}
 		}catch(FileNotFoundException e){
 			e.printStackTrace();
@@ -65,11 +68,11 @@ public class Fix{
 			FileReader fr = new FileReader("ubuntuFix.txt");
 			BufferedReader br = new BufferedReader(fr);
 			FixQuestion tmp = null;
-			int n = Integer.valueOf(br.readLine().substring(0,1));
+			int n = Integer.valueOf(br.readLine().substring(0,3));
 			int j=0;
 			for(int i=0;i<n;i++){
 				tmp = new FixQuestion();
-				tmp.readFronFile(br);
+				tmp.readFromFile(br);
 				if(tmp.matchKey(key)){
 					fq=Arrays.copyOf(fq,fq.length+1);
 					fq[j++]=tmp;
@@ -95,6 +98,30 @@ public class Fix{
 		}
 		return updateTime.substring(4,updateTime.length());
 	}
+	public static void outputQuestionsInRange(int m, int n){
+		try{
+			FileReader fr = new FileReader("ubuntuFix.txt");
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
+			FixQuestion fq = new FixQuestion();
+			if(Integer.valueOf(line.substring(0,3))<m || Integer.valueOf(line.substring(0,3))<n)
+				System.out.println("Index out of range!!!" + " Max : " + Integer.valueOf(line.substring(0,3)));
+			else{
+				for(int i=1;i<=n;i++){
+					fq.readFromFile(br);
+					if(i>=m){
+						System.out.println(fq);
+						System.out.println("========================================");
+					}
+				}
+			}
+		}catch(FileNotFoundException e){
+			e.printStackTrace();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+	}
+
 	public static void outputAllQuestions(){
 		String line;
 		try{
@@ -131,7 +158,7 @@ class FixQuestion{
 		return question + '\n' + answer;
 	}
 
-	public FixQuestion readFronFile(BufferedReader br){
+	public FixQuestion readFromFile(BufferedReader br){
 		try{
 			String line = br.readLine();
 			String ans="";
